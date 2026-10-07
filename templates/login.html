@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body{
+            margin:0;
+            padding:0;
+            font-family:'Segoe UI',sans-serif;
+            background:#F7F3E8;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .login-card{
+
+            width:360px;
+            background:white;
+            padding:35px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+        }
+
+        h1{
+
+            text-align:center;
+            margin-bottom:25px;
+            color:#142B52;
+
+        }
+
+        label{
+
+            display:block;
+            margin-top:15px;
+            margin-bottom:6px;
+            font-size:14px;
+
+        }
+
+        input{
+
+            width:100%;
+            padding:12px;
+            border:1px solid #ddd;
+            border-radius:8px;
+            box-sizing:border-box;
+
+        }
+
+        button{
+
+            width:100%;
+            margin-top:18px;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            background:#163F6E;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+
+        }
+
+        button:hover{
+
+            background:#0F3156;
+
+        }
+
+        p{
+
+            text-align:center;
+            margin-top:18px;
+            font-size:14px;
+
+        }
+
+        .alert{
+
+            padding:12px;
+            border-radius:8px;
+            margin-bottom:15px;
+
+        }
+
+        .success{
+
+            background:#d4edda;
+            color:#155724;
+
+        }
+
+        .danger{
+
+            background:#f8d7da;
+            color:#721c24;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+<h1>Welcome Back</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category,message in messages %}
+
+<div class="alert {{category}}">
+{{message}}
+</div>
+
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="POST">
+
+<label>Email</label>
+
+<input
+type="email"
+name="email"
+required>
+
+<label>Password</label>
+
+<input
+type="password"
+name="password"
+required>
+
+<button type="submit">
+
+Login
+
+</button>
+
+</form>
+
+<p>
+
+Don't have an account?
+
+<a href="/register">
+
+Register
+
+</a>
+
+</p>
+
+</div>
+
+</body>
+
+</html>

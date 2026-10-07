@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Financial Advisor</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="advisor-page">
+
+    <h1>AI Financial Advisor</h1>
+
+    <p>
+        Ask any financial question and receive AI-powered guidance.
+    </p>
+
+    <div class="chat-container">
+
+       <div class="chat-messages">
+
+    <div class="ai-message">
+        Hello! How can I help you improve your finances today?
+    </div>
+
+    <div class="quick-actions">
+
+        <button onclick="quickAsk('Analyze my finances')">
+            📊 Analyze My Finances
+        </button>
+
+        <button onclick="quickAsk('How can I improve savings?')">
+            💰 Improve Savings
+        </button>
+
+        <button onclick="quickAsk('Emergency fund tips')">
+            🚨 Emergency Fund
+        </button>
+
+    </div>
+
+</div>
+
+        <div class="chat-input-area">
+
+            <input
+    type="text"
+    id="userQuestion"
+    placeholder="Ask a financial question...">
+            <button onclick="askAI()">
+              Send
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+function quickAsk(text){
+
+    document.getElementById(
+        "userQuestion"
+    ).value = text;
+
+    askAI();
+}    
+
+async function askAI(){
+
+    const input =
+    document.getElementById(
+        "userQuestion"
+    );
+
+    const question =
+    input.value.trim();
+
+    if(!question) return;
+
+    const messages =
+    document.querySelector(
+        ".chat-messages"
+    );
+
+    const sendBtn =
+    document.querySelector(
+        ".chat-input-area button"
+    );
+
+    messages.innerHTML += `
+<div class="message-row user-row">
+
+    <div class="user-message">
+        ${question}
+    </div>
+
+    <div class="avatar">
+        👤
+    </div>
+
+</div>
+`;
+
+    messages.innerHTML += `
+        <div
+            class="ai-message loading-message"
+            id="loading">
+            Thinking...
+        </div>
+    `;
+
+    messages.scrollTop =
+    messages.scrollHeight;
+
+    sendBtn.disabled = true;
+    sendBtn.innerText = "Thinking...";
+
+    const formData =
+    new FormData();
+
+    formData.append(
+        "question",
+        question
+    );
+
+    try{
+
+        const response =
+        await fetch(
+            "/ask_ai",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const data =
+        await response.json();
+
+        document
+        .getElementById("loading")
+        .remove();
+
+        const cleanAnswer =
+        data.answer
+        .replace(/\*\*/g,"")
+        .replace(/\*/g,"");
+
+       messages.innerHTML += `
+<div class="message-row ai-row">
+
+    <div class="avatar">
+        🤖
+    </div>
+
+    <div class="ai-message">
+        ${cleanAnswer}
+    </div>
+
+</div>
+`;
+window.onload = () => {
+    document.getElementById(
+        "userQuestion"
+    ).focus();
+};
+messages.scrollTo({
+    top: messages.scrollHeight,
+    behavior: "smooth"
+});
+    }
+
+    catch(error){
+
+        document
+        .getElementById("loading")
+        ?.remove();
+
+        messages.innerHTML += `
+<div
+    class="ai-message loading-message"
+    id="loading">
+
+    <div class="typing">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+</div>
+`;
+
+    }
+
+    sendBtn.disabled = false;
+    sendBtn.innerText = "Send";
+
+    input.value = "";
+    input.focus();
+
+    messages.scrollTop =
+    messages.scrollHeight;
+}
+
+document
+.getElementById("userQuestion")
+.addEventListener(
+    "keypress",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            askAI();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

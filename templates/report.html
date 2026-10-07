@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Financial Reports</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="main-content">
+
+<h1>Financial Reports</h1>
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<h3>Model Accuracy</h3>
+
+<h2>98%</h2>
+
+<p>Random Forest Classifier</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Dataset Records</h3>
+
+<h2>5000+</h2>
+
+<p>Synthetic Financial Data</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Features Used</h3>
+
+<h2>6</h2>
+
+<p>Age, Income, Expenses etc.</p>
+
+</div>
+
+</div>
+
+<h2>EDA Reports</h2>
+
+<img src="/eda_results/category_distribution.png">
+
+<img src="/eda_results/health_score_distribution.png">
+
+<img src="/eda_results/correlation_heatmap.png">
+
+</div>
+<div class="report-summary">
+
+    <div class="report-card">
+
+        <h4>Model</h4>
+
+        <h2>Random Forest</h2>
+
+    </div>
+
+    <div class="report-card">
+
+        <h4>Accuracy</h4>
+
+        <h2>98%</h2>
+
+    </div>
+
+    <div class="report-card">
+
+        <h4>Dataset</h4>
+
+        <h2>5000 Records</h2>
+
+    </div>
+
+    <div class="report-card">
+
+        <h4>Classes</h4>
+
+        <h2>4</h2>
+
+    </div>
+
+</div>
+
+</body>
+</html>

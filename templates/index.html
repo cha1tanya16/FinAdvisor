@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Financial Recommendation System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+</head>
+
+<body>
+
+<!-- SETTINGS MODAL -->
+
+<div id="settingsModal"
+     class="settings-modal">
+
+    <div class="settings-content">
+
+        <div class="settings-header">
+
+            <h2>Settings</h2>
+
+            <span onclick="closeSettings()">
+                &times;
+            </span>
+
+        </div>
+
+        <div class="settings-body">
+
+            <label>
+                User Name
+            </label>
+
+            <input
+                type="text"
+                id="usernameInput"
+                placeholder="Enter Name">
+
+            <label>
+                Currency
+            </label>
+
+            <select id="currencySelect">
+
+                <option value="₹">
+                    ₹ INR
+                </option>
+
+                <option value="$">
+                    $ USD
+                </option>
+
+                <option value="€">
+                    € EUR
+                </option>
+
+                <option value="£">
+                    £ GBP
+                </option>
+
+            </select>
+
+            <label>
+                Theme
+            </label>
+
+            <select id="themeSelect">
+
+                <option value="default">
+                    Default
+                </option>
+
+                <option value="minimal">
+                    Minimal
+                </option>
+
+            </select>
+
+            <div class="dark-toggle">
+
+                <label>
+                    Dark Mode
+                </label>
+
+                <input
+                    type="checkbox"
+                    id="darkModeToggle">
+
+            </div>
+
+            <button
+                class="save-settings-btn"
+                onclick="saveSettings()">
+
+                Save Settings
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<div
+    id="profileModal"
+    class="profile-modal">
+
+    <div class="profile-content">
+
+        <div class="profile-header">
+
+            <h2>My Profile</h2>
+
+            <span onclick="closeProfileModal()">
+                &times;
+            </span>
+
+        </div>
+
+        <div class="profile-body">
+
+    <div
+        class="profile-avatar-large"
+        id="profileAvatarLarge">
+
+        {{ username[0]|upper }}
+
+    </div>
+
+    <h3 id="profileName">
+
+        {{ username }}
+
+    </h3>
+
+    <p>
+
+        {{ session.email }}
+
+
+    </p>
+
+    <button onclick="editProfile()">
+
+        Edit Profile
+
+    </button>
+
+    <button onclick="changePassword()">
+
+        Change Password
+
+    </button>
+
+    <button
+        class="logout-btn"
+        onclick="logoutUser()">
+
+        Logout
+
+    </button>
+
+</div>
+
+    </div>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        FRS
+    </div>
+
+    <div class="menu">
+
+        <a href="/"
+           class="menu-item active">
+
+            <i class="fa-solid fa-table-cells-large"></i>
+
+        </a>
+
+        <a href="/report"
+           class="menu-item">
+
+            <i class="fa-regular fa-credit-card"></i>
+
+        </a>
+
+        <a href="/advisor"
+         class="menu-item">
+
+         <i class="fa-solid fa-robot"></i>
+
+        </a>
+
+        <a href="/profile"
+           class="menu-item">
+
+            <i class="fa-regular fa-user"></i>
+
+        </a>
+
+    </div>
+
+    <div class="bottom-menu">
+
+        <div
+            class="menu-item"
+            onclick="openSettings()">
+
+            <i class="fa-solid fa-gear"></i>
+
+        </div>
+
+        <div
+            class="menu-item"
+            onclick="logoutUser()">
+
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+        </div>
+
+    <div
+    class="profile-avatar"
+    id="sidebarAvatar"
+    onclick="openProfileModal()">
+
+    {{ username[0]|upper }}
+
+</div>
+
+</div>   <!-- bottom-menu -->
+
+</div>   <!-- sidebar -->
+
+<!-- MAIN CONTENT -->
+
+<div class="main-content">
+
+<div class="top-bar">
+
+    <div>
+
+        <h1 id="welcomeTitle">
+            Hello, {{ username }}...
+        </h1>
+
+        <p>
+            Financial Health Dashboard
+        </p>
+
+    </div>
+
+    <div class="top-right">
+
+        <div class="search-bar">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search Dashboard...">
+
+        </div>
+
+        <div class="profile-wrapper">
+
+            <div
+                class="profile-circle"
+                id="profileCircle"
+                onclick="openProfileModal()">
+
+                {{ username[0]|upper }}
+
+            </div>
+
+            <div
+                class="profile-dropdown"
+                id="profileDropdown">
+
+                <a href="/profile">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    My Profile
+
+                </a>
+
+                <a href="#"
+                   onclick="openSettings()">
+
+                    <i class="fa-solid fa-gear"></i>
+
+                    Settings
+
+                </a>
+
+                <a href="#">
+
+                    <i class="fa-solid fa-key"></i>
+
+                    Change Password
+
+                </a>
+
+                <a href="#"
+                   onclick="logoutUser()">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+        
+
+    
+
+    <!-- KPI CARDS -->
+    <div
+        class="stats-grid"
+        id="dashboard">
+
+        <div class="stat-card">
+
+            <h4>
+                Health Score
+            </h4>
+
+            <h2>
+
+                {% if health_score %}
+                    {{ health_score }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+          
+            <div class="progress">
+
+              <div
+class="progress-fill health-progress"
+data-score="{{ health_score }}">
+</div>
+
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h4>
+                Savings Rate
+            </h4>
+
+            <h2>
+
+                {% if savings_rate %}
+                    {{ (savings_rate * 100)|round(1) }}%
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+            <small>
+                Monthly savings performance
+            </small>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h4>
+                Risk Profile
+            </h4>
+
+            <h2>
+
+                {% if risk %}
+                    {{ risk }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+            <small>
+                Based on preferences
+            </small>
+
+        </div>
+
+        <div class="stat-card highlight-card">
+
+            <h4>
+                Status
+            </h4>
+
+            <h2>
+
+                {% if prediction %}
+                    {{ prediction }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- SNAPSHOT -->
+
+    <div
+        class="snapshot-grid"
+        id="snapshot">
+
+        <div class="snapshot-card">
+
+            <h4>Income</h4>
+
+            <h2>
+
+                {% if income %}
+                    ₹{{ "{:,.0f}".format(income) }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+            <p>
+                Monthly income
+            </p>
+
+        </div>
+
+        <div class="snapshot-card">
+
+            <h4>Expenses</h4>
+
+            <h2>
+
+                {% if expenses %}
+                    ₹{{ "{:,.0f}".format(expenses) }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+            <p>
+                Monthly expenses
+            </p>
+
+        </div>
+
+        <div class="snapshot-card">
+
+            <h4>Savings</h4>
+
+            <h2>
+
+                {% if savings %}
+                    ₹{{ "{:,.0f}".format(savings) }}
+                {% else %}
+                    --
+                {% endif %}
+
+            </h2>
+
+            <p>
+                Available savings
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN CONTENT GRID -->
+
+    <div class="content-grid">
+
+        <!-- ANALYSIS FORM -->
+
+        <div
+            class="form-card"
+            id="analysis">
+
+            <h2>
+                Financial Analysis
+            </h2>
+
+            <form method="POST">
+
+                <div class="form-grid">
+
+                    <input
+    type="number"
+    name="age"
+    placeholder="Age"
+    min="18"
+    max="100"
+    required>
+                    <input
+                        type="number"
+                        name="income"
+                        placeholder="Income"
+                        required>
+
+                    <input
+                        type="number"
+                        name="expenses"
+                        placeholder="Expenses"
+                        required>
+
+                    <input
+                        type="number"
+                        name="savings"
+                        placeholder="Savings"
+                        required>
+
+                    <select name="goal">
+
+                        <option>
+                            House
+                        </option>
+
+                        <option>
+                            Education
+                        </option>
+
+                        <option>
+                            Retirement
+                        </option>
+
+                        <option>
+                            Investment
+                        </option>
+
+                        <option>
+                            Vehicle
+                        </option>
+
+                        <option>
+                            Emergency Fund
+                        </option>
+
+                    </select>
+
+                    <select name="risk">
+
+                        <option>
+                            Conservative
+                        </option>
+
+                        <option>
+                            Balanced
+                        </option>
+
+                        <option>
+                            Aggressive
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <button
+                    class="analyze-btn"
+                    type="submit">
+
+                    Analyze Financial Health
+
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- INSIGHTS -->
+
+
+        <div
+            class="recommendation-card"
+            id="recommendation">
+
+            <h3>
+                Financial Insights
+            </h3>
+
+            {% if prediction %}
+
+                <h1
+                    class="prediction-status">
+
+                    {{ prediction }}
+
+                </h1>
+
+                <p>
+
+                    {{ recommendation }}
+
+                </p>
+
+                <div class="summary-box">
+
+                    <div class="summary-row">
+
+                        <span>
+                            Goal
+                        </span>
+
+                        <strong>
+                            {{ goal }}
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Health Score
+                        </span>
+
+                        <strong>
+                            {{ health_score }}
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Savings Rate
+                        </span>
+
+                        <strong>
+
+                            {{ (savings_rate * 100)|round(1) }}%
+
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>
+                            Emergency Coverage
+                        </span>
+
+                        <strong>
+
+                            {{ emergency_fund_coverage|round(1) }}x
+
+                        </strong>
+
+                    </div>
+                    <div class="summary-row">
+
+                      <span>
+                         1 Year Projection
+                     </span>
+
+                     <strong>
+                           ₹{{ future_savings }}
+                     </strong>
+
+                    </div>
+
+                </div>
+                
+
+            {% else %}
+
+                <p>
+
+                    Enter your financial details
+                    to receive personalized
+                    recommendations.
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+   
+ <div class="chart-section">
+
+    <div class="chart-card">
+
+        <h3>Financial Overview</h3>
+
+        <canvas id="financialChart"></canvas>
+
+    </div>
+
+    <div class="chart-card">
+
+        <h3>Expense Breakdown</h3>
+
+        <div class="pie-chart-wrapper">
+
+            <canvas id="expensePie"></canvas>
+
+        </div>
+
+    </div>
+
+ </div>
+    <!-- FINANCIAL TIP -->
+
+    <div class="tip-card">
+
+        <h3>
+
+            <i class="fa-solid fa-lightbulb"></i>
+
+            Financial Tip
+
+        </h3>
+
+        {% if prediction == "Excellent" %}
+
+            <p>
+
+                Continue diversifying investments and maintain long-term consistency.
+
+            </p>
+
+        {% elif prediction == "Good" %}
+
+            <p>
+
+                Increase emergency fund coverage and automate monthly investments.
+
+            </p>
+
+        {% elif prediction == "Average" %}
+
+            <p>
+
+                Focus on reducing discretionary spending and boosting savings.
+
+            </p>
+
+        {% elif prediction %}
+
+            <p>
+
+                Build an emergency fund first and establish a monthly budget.
+
+            </p>
+
+        {% else %}
+
+            <p>
+
+                Analyze your finances to receive personalized recommendations.
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+<!-- JAVASCRIPT -->
+
+<script>
+
+function toggleProfile(){
+
+    document
+        .getElementById("profileDropdown")
+        .classList
+        .toggle("show");
+
+}
+
+window.addEventListener(
+    "click",
+    function(event){
+
+        const profile =
+        document.getElementById(
+            "profileDropdown"
+        );
+
+        const modal =
+        document.getElementById(
+            "settingsModal"
+        );
+
+        if(
+            !event.target.closest(
+                ".profile-wrapper"
+            )
+        ){
+
+            profile.classList.remove(
+                "show"
+            );
+
+        }
+
+        if(
+            event.target === modal
+        ){
+
+            closeSettings();
+
+        }
+
+    }
+);
+      
+function saveSettings(){
+
+    let username =
+        document.getElementById(
+            "usernameInput"
+        ).value;
+
+    let currency =
+        document.getElementById(
+            "currencySelect"
+        ).value;
+
+    let darkMode =
+        document.getElementById(
+            "darkModeToggle"
+        ).checked;
+
+    localStorage.setItem(
+        "username",
+        username
+    );
+
+    localStorage.setItem(
+        "currency",
+        currency
+    );
+
+    localStorage.setItem(
+        "darkMode",
+        darkMode
+    );
+
+    if(darkMode){
+
+        document.body.classList.add(
+            "dark-mode"
+        );
+
+    }else{
+
+        document.body.classList.remove(
+            "dark-mode"
+        );
+
+    }
+
+}
+
+function openSettings(){
+
+    document
+    .getElementById("settingsModal")
+    .style.display = "flex";
+
+}
+
+function closeSettings(){
+
+    document
+    .getElementById("settingsModal")
+    .style.display = "none";
+
+}
+
+window.onload = function(){
+    
+    let darkMode =
+        localStorage.getItem(
+            "darkMode"
+        );
+
+    if(darkMode === "true"){
+
+        document.body.classList.add(
+            "dark-mode"
+        );
+
+        document
+            .getElementById(
+                "darkModeToggle"
+            )
+            .checked = true;
+
+    }
+
+    const chartCanvas =
+        document.getElementById(
+    "financialChart"
+);
+const pieCanvas =
+ document.getElementById(
+    "expensePie"
+);
+
+if(pieCanvas){
+
+    new Chart(pieCanvas,{
+            type: 'pie',
+
+            data: {
+
+                labels: [
+                    'Expenses',
+                    'Savings'
+                ],
+                options:{
+                responsive:true,
+                maintainAspectRatio:false
+                },
+
+                datasets: [{
+                    data: [
+                        Number("{{ expenses or 0 }}"),
+                        Number("{{ savings or 0 }}")
+                    ],
+
+                    backgroundColor: [
+                        "#0D3B66",
+                        "#4CAF50"
+                    ]
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+                        position: 'bottom'
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+    if(chartCanvas){
+
+        new Chart(chartCanvas,{
+
+            type:'line',
+
+            data:{
+
+                labels:[
+
+               "Expenses (₹{{ '{:,.0f}'.format(expenses or 0) }})",
+
+             "Savings (₹{{ '{:,.0f}'.format(savings or 0) }})"
+
+                ],
+
+                datasets:[{
+
+                      label:'Financial Overview',
+
+    data:[
+    Number("{{ income or 0 }}"),
+    Number("{{ expenses or 0 }}"),
+    Number("{{ savings or 0 }}")
+],
+
+    borderColor:"#0D3B66",
+
+    backgroundColor:"rgba(13,59,102,0.12)",
+
+    fill:true,
+
+    tension:0.45,
+
+    pointRadius:6,
+
+    pointHoverRadius:8,
+
+    borderWidth:4
+
+}]
+
+            },
+ 
+            options:{
+
+    responsive:true,
+
+    maintainAspectRatio:false,
+
+    plugins:{
+
+        legend:{
+            display:false
+        }
+
+    },
+
+    scales:{
+
+        y:{
+
+            beginAtZero:true,
+
+            grid:{
+                color:"rgba(0,0,0,.05)"
+            }
+
+        },
+
+        x:{
+
+            grid:{
+                display:false
+            }
+
+        }
+
+    }
+
+}
+
+        });
+
+    }
+
+};
+
+document
+.getElementById("searchInput")
+.addEventListener(
+    "keyup",
+    function(){
+
+        let value =
+        this.value.toLowerCase();
+
+        document
+        .querySelectorAll(
+            "input, select"
+        )
+        .forEach(function(field){
+
+            if(
+                field.placeholder &&
+                field.placeholder
+                .toLowerCase()
+                .includes(value)
+            ){
+                field.style.outline =
+                "3px solid #0D3B66";
+            }
+            else{
+                field.style.outline =
+                "";
+            }
+
+        });
+
+    }
+);
+function logoutUser(){
+
+    if(confirm("Are you sure you want to logout?")){
+
+        window.location.href="/logout";
+
+    }
+
+}
+function openProfileModal(){
+
+    document.getElementById(
+        "profileModal"
+    ).style.display="flex";
+
+}
+
+function closeProfileModal(){
+
+    document.getElementById(
+        "profileModal"
+    ).style.display="none";
+
+}
+
+
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const progressBar =
+    document.querySelector(".health-progress");
+
+    if(progressBar){
+
+        const score =
+        progressBar.dataset.score || 0;
+
+        progressBar.style.width =
+        score + "%";
+
+    }
+
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+
+</html>    
