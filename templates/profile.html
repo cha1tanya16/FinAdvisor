@@ -7,6 +7,63 @@
 <link rel="stylesheet"
 href="{{ url_for('static', filename='style.css') }}">
 
+<style>
+.profile-header {
+    margin-bottom: 24px;
+}
+
+.profile-header h2 {
+    font-size: 32px;
+    margin: 0 0 8px 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.profile-header p {
+    margin: 0;
+    color: #555;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.profile-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    min-height: 120px;
+}
+
+.profile-card h3 {
+    margin: 0 0 18px 0;
+    font-size: 16px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.profile-card h2 {
+    margin: 0 0 8px 0;
+    font-size: 30px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.profile-card p {
+    margin: 0;
+    color: #666;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+@media (max-width: 800px) {
+    .profile-cards {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -15,30 +72,52 @@ href="{{ url_for('static', filename='style.css') }}">
 
 <h1>User Profile</h1>
 
-<div class="stat-card">
+<div class="stat-card profile-header">
 
-<h2 id="profileNamePage">
-{{ username }}
-</h2>
+<h2>{{ username }}</h2>
 
-<p>
-{{ email }}
-</p>
+<p>{{ email }}</p>
+
+</div>
+
+
+<div class="profile-cards">
+
+<div class="profile-card">
+
+<h3>Financial Health</h3>
+
+<h2>{{ health_score }}/100</h2>
+
+<p>{{ prediction }}</p>
+
+</div>
+
+
+<div class="profile-card">
+
+<h3>Financial Goal</h3>
+
+<h2>{{ goal }}</h2>
+
+<p>Risk Preference: {{ risk }}</p>
+
+</div>
+
+
+<div class="profile-card">
+
+<h3>Savings</h3>
+
+<h2>{{ savings_rate }}%</h2>
+
+<p>Current Savings Rate</p>
 
 </div>
 
 </div>
 
-<script>
-
-document.getElementById(
-"profileNamePage"
-).innerText =
-localStorage.getItem(
-"username"
-) || "User";
-
-</script>
+</div>
 
 </body>
 </html>

@@ -7,6 +7,7 @@ from flask import send_from_directory
 import sqlite3
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
+import json
 import os
 from dotenv import load_dotenv
 
@@ -41,6 +42,7 @@ print("All Models Loaded Successfully!")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    global latest_user_data
       # Only logged in users can access dashboard
     if "user_id" not in session:
         return redirect("/login")
@@ -48,6 +50,7 @@ def home():
     username = session.get("username", "User")
 
     prediction = None
+    confidence = None
     recommendation = None
     tip = None
 
@@ -62,6 +65,7 @@ def home():
 
     goal = None
     risk = None
+    original_risk = None
 
     chart_income = 0
     chart_expenses = 0
@@ -262,11 +266,7 @@ def home():
                 expenses,
                 savings,
                 goal_encoded,
-                risk_encoded,
-                savings_rate,
-                expense_ratio,
-                emergency_fund_coverage,
-                health_score
+                risk_encoded
             ]],
             columns=[
                 "Age",
@@ -274,11 +274,7 @@ def home():
                 "Expenses",
                 "Savings",
                 "Goal",
-                "Risk",
-                "Savings_Rate",
-                "Expense_Ratio",
-                "Emergency_Fund_Coverage",
-                "Health_Score"
+                "Risk"
             ]
         )
 
@@ -289,6 +285,11 @@ def home():
         result = model.predict(input_data)
 
         prediction = category_encoder.inverse_transform(result)[0]
+
+        probabilities = model.predict_proba(input_data)[0]
+        confidence = round(max(probabilities) * 100, 2)
+        latest_user_data["prediction"] = prediction
+        latest_user_data["confidence"] = confidence
 
         # ==========================
         # GOAL-SPECIFIC RECOMMENDATIONS
@@ -368,9 +369,7 @@ def home():
         chart_savings = savings
 
         risk = original_risk
-        global latest_user_data
-
-        latest_user_data = {
+    latest_user_data = {
 
     "income": income,
     "expenses": expenses,
@@ -382,17 +381,19 @@ def home():
     "health_score": health_score,
 
     "prediction": prediction,
-
+    "confidence": confidence,
     "savings_rate": round(
-        savings_rate * 100,
-        2
-    ),
+       (savings_rate * 100) if savings_rate is not None else 0,
+       2
+),
 
     "emergency_fund": round(
-        emergency_fund_coverage,
-        2
-    )
+      emergency_fund_coverage if emergency_fund_coverage is not None else 0,
+      2
+)
+    
 }
+    session["financial_profile"] = latest_user_data
 
     return render_template(
 
@@ -464,6 +465,8 @@ def ask_ai():
 
     question_lower = question.lower()
 
+    prediction = latest_user_data.get("prediction", "Unknown")
+    confidence = latest_user_data.get("confidence", 0)
     try:
 
         # ====================================
@@ -528,6 +531,7 @@ Provide a concise financial analysis.
 
 Format EXACTLY:
 
+🤖 ML Prediction: {prediction} | Confidence: {confidence}%
 📊 Score: X/100 (Category)
 
 ⚠ Main Problems
@@ -560,6 +564,12 @@ You are an AI Financial Advisor.
 User Financial Data:
 {latest_user_data}
 
+ML Model Prediction:
+{prediction}
+
+ML Model Confidence:
+{confidence}%
+
 User Question:
 {question}
 
@@ -582,7 +592,7 @@ Rules:
         })
 
     except Exception as e:
-
+     print("ASK_AI ERROR:", e)
      error_text = str(e)
 
     if "429" in error_text:
@@ -603,22 +613,37 @@ def report():
     if "user_id" not in session:
         return redirect("/login")
 
+    with open("models/model_metrics.json", "r") as file:
+        metrics = json.load(file)
+
+    model_accuracy = round(metrics["accuracy"] * 100, 1)
+
     return render_template(
         "report.html",
         username=session.get("username"),
-        email=session.get("email")
+        email=session.get("email"),
+        model_accuracy=model_accuracy,
+        dataset_records=5000,
+        features_used=6,
+        classes_count=4
     )
-
 @app.route("/profile")
 def profile():
 
     if "user_id" not in session:
         return redirect("/login")
 
+    financial_data = session.get("financial_profile", {})
+
     return render_template(
         "profile.html",
         username=session.get("username"),
-        email=session.get("email")
+        email=session.get("email"),
+        health_score=financial_data.get("health_score", 0),
+        prediction=financial_data.get("prediction", "Not analyzed"),
+        goal=financial_data.get("goal", "Not set"),
+        risk=financial_data.get("risk", "Not set"),
+        savings_rate=financial_data.get("savings_rate", 0)
     )
 
 @app.route('/eda_results/<path:filename>')
